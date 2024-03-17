@@ -1,0 +1,13 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mysql.dao.AddressDao">
+
+    <insert id="addAddresses">
+        insert into `address`(address_detail, created, is_delete)
+        values
+        <foreach collection="list" item="address" separator=",">
+            (#{address.addressDetail}, #{address.created}, #{address.isDelete})
+        </foreach>
+    </insert>
+</mapper>

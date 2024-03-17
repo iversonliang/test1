@@ -1,0 +1,42 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mysql.dao.UserDao">
+    <select id="getUserList" resultType="com.test.mysql.entity.User">
+
+        select id, user_name, id_card, gender, is_delete
+        from `user`
+
+    </select>
+
+    <select id="searchList" resultType="com.test.mysql.entity.User">
+        select id, user_name, address, `number`, id_card, gender, is_delete
+        from `user` where user_name like concat(#{keyword}, '%') or address like concat(#{keyword}, '%')
+    </select>
+
+    <select id="getNullId" resultType="com.test.mysql.entity.User">
+        select id from `user` where address_id is null
+    </select>
+    <select id="getUserTest" resultType="com.test.mysql.entity.UserTest">
+        select
+        user_join.id, user_join.user_name, user_join.id_card
+        from user left join user_join on user.id = user_join.id
+        <where>
+            <if test="id != null">
+                and user.id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addUsers">
+        insert into `user`(user_name, address, id_card, created, is_delete)
+        values
+        <foreach collection="list" item="user" separator=",">
+            (#{user.userName}, #{user.address}, #{user.idCard}, #{user.created}, #{user.isDelete})
+        </foreach>
+    </insert>
+
+    <update id="updateById">
+        update `user` set address_id = #{addressId} where id = #{id}
+    </update>
+</mapper>

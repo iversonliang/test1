@@ -1,0 +1,80 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mysql.dao.OrderInfoDao">
+
+
+    <insert id="save">
+        insert into order_info(`period`, amount, user_name, phone, created, creator, modified, modifier)
+
+        values(#{period}, #{amount}, #{userName}, #{phone}, #{created}, #{creator}, #{modified}, #{modifier})
+    </insert>
+    <update id="batchSave">
+        insert into order_info (`period`, amount, user_name, phone, created, creator, modified, modifier)
+        values
+        <foreach collection="orderInfos" item="orderInfo" separator=",">
+            (#{orderInfo.period}, #{orderInfo.amount}, #{orderInfo.userName}, #{orderInfo.phone},
+             #{orderInfo.created}, #{orderInfo.creator}, #{orderInfo.modified}, #{orderInfo.modifier})
+        </foreach>
+    </update>
+    <select id="selectPage" resultType="com.test.mysql.entity.OrderInfo">
+        select * from order_info
+        <where>
+            <if test="period != null">
+                and period = #{period}
+            </if>
+        </where>
+        order by modified desc limit #{start}, #{count}
+    </select>
+
+    <select id="searchPage" resultType="com.test.mysql.entity.OrderInfo">
+        select o.* from order_info o join order_detail od
+        on od.order_id = o.id
+        <where>
+            <if test="searchItem != null">
+                and o.phone = #{searchItem} or od.address = #{searchItem}
+            </if>
+        </where>
+    </select>
+
+    <select id="searchPage2" resultType="com.test.mysql.entity.OrderInfo">
+        select o.* from order_info o join order_detail od
+        on od.order_id = o.id
+        <where>
+            <if test="searchItem != null">
+                and o.phone = #{searchItem}
+            </if>
+        </where>
+        union all
+        select o.* from order_info o join order_detail od
+        on od.order_id = o.id
+        <where>
+            <if test="searchItem != null">
+                and od.address = #{searchItem}
+            </if>
+        </where>
+    </select>
+
+    <select id="searchPage3" resultType="com.test.mysql.entity.OrderInfo">
+        select o.* from order_info o join order_detail od
+        on od.order_id = o.id
+        <where>
+            <if test="searchItem != null">
+                and o.phone = #{searchItem}
+            </if>
+
+            <if test="searchItemOd != null">
+                and od.address = #{searchItem}
+            </if>
+        </where>
+    </select>
+    <select id="selectPageHelper" resultType="com.test.mysql.entity.OrderInfo">
+        select * from order_info
+        <where>
+            <if test="period != null">
+                and period = #{period}
+            </if>
+        </where>
+        order by modified desc
+    </select>
+</mapper>
